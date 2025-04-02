@@ -5,8 +5,6 @@
         listen [::]:{{ nginx_port }};
 
 
-        server_name  {{ nginx_server_name }};
-
         location / {
             proxy_pass http://{{ webserver_private_ip }}:{{ webserver_port }};
             include /etc/nginx/proxy_params; # use include for reusable proxy parameters

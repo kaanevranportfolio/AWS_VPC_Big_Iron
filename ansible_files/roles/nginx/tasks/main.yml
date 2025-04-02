@@ -1,18 +1,34 @@
 
 - name: Install Nginx
-  apt:       # Use yum for CentOS/RHEL, etc.
+  apt:
     name: nginx
-    state: present
-    update_cache: yes
+    state: present 
+    update_cache: yes 
 
-- name: Copy Nginx configuration file
+- name: Remove default Nginx site if it exists
+  file:
+    path: /etc/nginx/sites-enabled/default 
+    state: absent 
+  notify: Reload Nginx Service
+
+- name: Copy reverse proxy configuration file
   template:
-    src: nginx.conf.j2
-    dest: /etc/nginx/conf.d/nginx.conf
-  notify: Validate and Restart Nginx
+    src: reverse_proxy.conf.j2
+    dest: /etc/nginx/sites-available/reverse_proxy
+  notify:
+    - Validate Nginx Configuration
+    - Fail if Nginx Configuration is Invalid
+    - Reload Nginx Service
+
+- name: Enable reverse proxy configuration
+  file:
+    src: /etc/nginx/sites-available/reverse_proxy
+    dest: /etc/nginx/sites-enabled/reverse_proxy 
+    state: link
+  notify: Reload Nginx Service
 
 - name: Ensure Nginx is running
   service:
     name: nginx
-    state: started
-    enabled: yes
+    state: started 
+    enabled: yes 

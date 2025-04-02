@@ -79,8 +79,6 @@ resource "aws_instance" "control-server" {
 }
 
 
-
-
 data "template_file" "inventory_ini" {
   template = file("./ansible_files/inventory.yml.tpl")
 
@@ -158,4 +156,22 @@ resource "null_resource" "provision_control_server" {
       "sudo chmod 600 /home/ec2-user/ansible_files/keys/*"
     ]
   }
+}
+
+resource "null_resource" "start_ansible" {
+  depends_on = [null_resource.provision_control_server]
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = file("./keys/control_server_key")
+    host        = aws_instance.control-server.public_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "cd /home/ec2-user/ansible_files",
+      "sudo ansible-playbook playbook.yml"
+    ]
+  }
+
 }

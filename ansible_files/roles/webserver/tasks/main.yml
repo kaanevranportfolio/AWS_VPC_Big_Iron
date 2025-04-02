@@ -1,6 +1,7 @@
 # tasks/main.yml
 - name: Install Apache
   yum:
+    update_cache: yes
     name: httpd
     state: present
 
@@ -8,7 +9,7 @@
   template:
     src: index.html.j2
     dest: /var/www/html/index.html
-  notify:
+  notify: 
     - Restart web server
 
 - name: Ensure Apache is running
