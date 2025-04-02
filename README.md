@@ -64,6 +64,9 @@ The Terraform configuration in this project sets up the following AWS resources:
     ```bash
     terraform apply
     ```
+By starting terraform, it automaitcally runs ansible playbook automatically on control host with inline provision.This provision depends on file provision of Ansible Files to avoid error.
+
+![Run Ansible Playbook automatically Control](./automated.png)
 
 ## Destroying the Terraform Project
 
